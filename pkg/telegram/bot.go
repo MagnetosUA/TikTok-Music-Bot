@@ -210,20 +210,30 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) {
 			}
 		}
 
-		message, err := getSongName(message)
+		songName, err := getSongName(message)
 		if err != nil {
 			return
 		}
 
-		if message == "" {
-			message = "Bad request!"
+		if songName == "" {
+			songName = "Bad request!"
+		} else {
+			//fmt.Println("\n\n\n", "Song name: ", message, "\n\n\n")
 		}
 
 		var messages []string
 
-		messages = DownloadFullSongZK(message)
+		if len(songName) < 2 {
+			songName = "Song is not found"
+		} else {
+			messages = DownloadFullSongZK(songName)
+		}
 
-		messages = append(messages, message)
+		fmt.Println("SOUND NAME: ", songName)
+
+		//DownloadFile(songName+"mp3", messages[0])
+
+		//messages = append(messages, message)
 
 		fmt.Sprintf("MESSAGES.len: %v", len(messages))
 
@@ -232,14 +242,41 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) {
 				if i >= 2 {
 					break
 				}
+
+				//func NewAudioShare(chatID int64, fileID string) AudioConfig {
+				//	return AudioConfig{
+				//	BaseFile: BaseFile{
+				//	BaseChat:    BaseChat{ChatID: chatID},
+				//	FileID:      fileID,
+				//	UseExisting: true,
+				//},
+				//}
+				//}
+
+				fmt.Println("SOUND URL: ", mes)
+
+				//response, err := http.Get(mes)
+				//if err != nil {
+				//
+				//}
+
+				//link := "<a href=\"google.com\">Link</a>"
+				//audio := tgbotapi.NewInlineQueryResultAudio("123", mes, songName)
+				textMessage := tgbotapi.NewMessage(update.Message.Chat.ID, songName)
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, mes+"\n")
+				//msg := tgbotapi.NewAudioUpload(update.Message.Chat.ID, mes)
+				//msg := tgbotapi.NewMessage(update.Message.Chat.ID, mes)
+
+				b.bot.Send(textMessage)
 				b.bot.Send(msg)
-				continue
+
+				break
 			}
 		} else {
-			//msg := tgbotapi.NewMessage(update.Message.Chat.ID, url)
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, message)
-			b.bot.Send(msg)
+			textMessage := tgbotapi.NewMessage(update.Message.Chat.ID, "Song is not found")
+			//msg := tgbotapi.NewMessage(update.Message.Chat.ID, message)
+			b.bot.Send(textMessage)
+			//b.bot.Send(msg)
 		}
 
 	}
@@ -273,9 +310,9 @@ func getSongName(originalSoundURL string) (songName string, err error) {
 	outputShortSongName := fmt.Sprintf("%v_short.mp3", sourceSong)
 	outputSongName := fmt.Sprintf("%v.wav", sourceSong)
 
-	exec.Command("ffmpeg", "-ss", "3", "-i", sourceSongName, "-t", "5", outputShortSongName).Output()
+	exec.Command("ffmpeg", "-y", "-ss", "3", "-i", sourceSongName, "-t", "5", outputShortSongName).Output()
 
-	exec.Command("ffmpeg", "-i", outputShortSongName, "-acodec", "pcm_s16le", "-ac", "1", "-ar", "48000", outputSongName).Output()
+	exec.Command("ffmpeg", "-y", "-i", outputShortSongName, "-acodec", "pcm_s16le", "-ac", "1", "-ar", "48000", outputSongName).Output()
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -300,9 +337,9 @@ func getSongName(originalSoundURL string) (songName string, err error) {
 		return
 	}
 
-	fmt.Println(song.Track.Subtitle, song.Track.Title)
+	fmt.Println(song.Track.Subtitle, " ", song.Track.Title)
 
-	return song.Track.Subtitle + song.Track.Title, nil
+	return song.Track.Subtitle + " " + song.Track.Title, nil
 }
 
 type ShazamResponse struct {
