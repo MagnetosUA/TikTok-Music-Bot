@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"fmt"
+	config2 "github.com/MagnetosUA/TikTok-Music-Bot/pkg/config"
 	"github.com/MagnetosUA/TikTok-Music-Bot/pkg/shazam"
 	"github.com/MagnetosUA/TikTok-Music-Bot/pkg/tiktok"
 	zk2 "github.com/MagnetosUA/TikTok-Music-Bot/pkg/zk"
@@ -17,7 +18,7 @@ func NewBot(bot *tgbotapi.BotAPI) *Bot {
 	return &Bot{bot: bot}
 }
 
-func (b *Bot) Start() error {
+func (b *Bot) Start(config *config2.Config) error {
 	log.Printf("Authorized on account %s", b.bot.Self.UserName)
 
 	updates, err := b.initUpdatesChannel()
@@ -25,12 +26,12 @@ func (b *Bot) Start() error {
 		return err
 	}
 
-	b.handleUpdates(tiktok.NewTikTok(), updates)
+	b.handleUpdates(tiktok.NewTikTok(config), config, updates)
 
 	return nil
 }
 
-func (b *Bot) handleUpdates(tk *tiktok.TikTok, updates tgbotapi.UpdatesChannel) {
+func (b *Bot) handleUpdates(tk *tiktok.TikTok, config *config2.Config, updates tgbotapi.UpdatesChannel) {
 	for update := range updates {
 		if update.Message == nil { // ignore any non-Message Updates
 			continue
@@ -43,7 +44,7 @@ func (b *Bot) handleUpdates(tk *tiktok.TikTok, updates tgbotapi.UpdatesChannel) 
 			return
 		}
 
-		songName, err := tk.GetSongName(shazam.NewShazam(shazam.ShazamResourceURL), message)
+		songName, err := tk.GetSongName(shazam.NewShazam(*config), message)
 		if err != nil {
 			return
 		}
@@ -54,7 +55,7 @@ func (b *Bot) handleUpdates(tk *tiktok.TikTok, updates tgbotapi.UpdatesChannel) 
 
 		var messages []string
 
-		var zk = zk2.NewZK()
+		var zk = zk2.NewZK(config)
 
 		if len(songName) < 2 {
 			songName = "Song is not found"

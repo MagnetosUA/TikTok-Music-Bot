@@ -2,6 +2,7 @@ package zk
 
 import (
 	"fmt"
+	config2 "github.com/MagnetosUA/TikTok-Music-Bot/pkg/config"
 	"github.com/PuerkitoBio/goquery"
 	"golang.org/x/net/publicsuffix"
 	"net/http"
@@ -10,21 +11,17 @@ import (
 	"time"
 )
 
-const zkURL = "https://z2.fm"
-const searchURL = "https://z2.fm/mp3/search?keywords="
-const downloadURL = "https://z2.fm/download/"
-
 type ZK struct {
 	HostURL     string
 	SearchURL   string
 	DownloadURL string
 }
 
-func NewZK() *ZK {
+func NewZK(config *config2.Config) *ZK {
 	return &ZK{
-		HostURL:     zkURL,
-		SearchURL:   searchURL,
-		DownloadURL: downloadURL,
+		HostURL:     config.ZkHostURL,
+		SearchURL:   config.ZkSearchURL,
+		DownloadURL: config.ZkDownloadURL,
 	}
 }
 

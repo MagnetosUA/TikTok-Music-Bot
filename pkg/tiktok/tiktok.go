@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	config2 "github.com/MagnetosUA/TikTok-Music-Bot/pkg/config"
 	"github.com/MagnetosUA/TikTok-Music-Bot/pkg/shazam"
 	"io"
 	"io/ioutil"
@@ -17,23 +18,19 @@ import (
 	"strings"
 )
 
-const hostURL = "https://www.tiktok.com/"
-
 type TikTok struct {
 	HostURL string
 }
 
-func NewTikTok() *TikTok {
+func NewTikTok(config *config2.Config) *TikTok {
 	return &TikTok{
-		HostURL: hostURL,
+		HostURL: config.TikTokHostURL,
 	}
 }
 
 type ResponseTikTok struct {
 	Html string `json:"html"`
 }
-
-//var defaultCookies = make(map[string]string)
 
 // referer header is not necessary while accessing API, but is must when
 // downloading videos. The same headers and cookies must be used both when

@@ -1,0 +1,5 @@
+shazam_resource_url: "https://shazam.p.rapidapi.com/songs/detect"
+tik_tok_host_url: "https://www.tiktok.com/"
+zk_host_url: "https://z2.fm"
+zk_search_url: "https://z2.fm/mp3/search?keywords="
+zk_download_url: "https://z2.fm/download/"

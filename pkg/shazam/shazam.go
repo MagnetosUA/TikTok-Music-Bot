@@ -2,16 +2,10 @@ package shazam
 
 import (
 	"encoding/json"
+	"github.com/MagnetosUA/TikTok-Music-Bot/pkg/config"
 	"io/ioutil"
 	"net/http"
 	"strings"
-)
-
-// should be moved to env variables
-const (
-	ShazamResourceURL = "https://shazam.p.rapidapi.com/songs/detect"
-	Host              = "shazam.p.rapidapi.com"
-	Key               = "0dcc409e08msh55fe6be19bff0bcp192cf3jsn0d091d334fda"
 )
 
 type ShazamInterfce interface {
@@ -24,11 +18,11 @@ type Shazam struct {
 	Key         string
 }
 
-func NewShazam(url string) *Shazam {
+func NewShazam(config config.Config) *Shazam {
 	return &Shazam{
-		ResourceURL: url,
-		Host:        Host,
-		Key:         Key,
+		ResourceURL: config.ShazamResourceURL,
+		Host:        config.ShazamHost,
+		Key:         config.ShazamKey,
 	}
 }
 
