@@ -2,7 +2,6 @@ package config
 
 import (
 	"github.com/spf13/viper"
-	"os"
 )
 
 type Config struct {
@@ -40,10 +39,6 @@ func Init() (*Config, error) {
 }
 
 func parseEnv(config *Config) error {
-	os.Setenv("TELEGRAM_TOKEN", "1675374273:AAHCAYwVhhka8Qf-bYWFGRMViV5t2eZcPAE")
-	os.Setenv("SHAZAM_KEY", "0dcc409e08msh55fe6be19bff0bcp192cf3jsn0d091d334fda")
-	os.Setenv("SHAZAM_HOST", "shazam.p.rapidapi.com")
-
 	if err := viper.BindEnv("telegram_token"); err != nil {
 		return err
 	}
